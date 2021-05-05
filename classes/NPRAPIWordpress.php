@@ -310,6 +310,12 @@ class NPRAPIWordpress extends NPRAPI {
                             $attached_images = get_children( $image_args );
                         }	
                         foreach ( (array) $story->image as $image ) {
+
+                            // only sideload the primary image if using the npr layout
+                            if ( ($image->type != 'primary') && $npr_has_layout ) {
+                              continue;
+                            }
+
                             $image_url = '';
 		        		    //check the <enlargement> and then the crops, in this order "enlargement", "standard"  if they don't exist, just get the image->src
                             if ( ! empty( $image->enlargement ) ) {
