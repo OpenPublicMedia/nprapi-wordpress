@@ -157,19 +157,25 @@ class NPRAPIWordpress extends NPRAPI {
 	        		'post_type'    => $pull_post_type,
                     'post_date'    => $post_date,
                 );
+                $wp_category_ids = array();
+                $wp_category_id="";
                 if( false !== $qnum ) {
                     $args['tags_input'] = get_option('ds_npr_query_tags_'.$qnum);
-                    if ($pull_post_type == 'post'){
-                        $wp_category_ids = array();
-                        $wp_category_id="";
+                    if ($pull_post_type == 'post'){                      
                         //Get Default category from options table and store in array for post_array
                         $wp_category_id = intval(get_option('ds_npr_query_category_'.$qnum));
                         $wp_category_ids[]=$wp_category_id;
-                        if (0 < sizeof($cats) ){
-                            // merge arrays and remove duplicate ids
-                            $wp_category_ids = array_unique(array_merge($wp_category_ids, $cats));
-                        }  
                     }
+                }else{
+                    // Assign default category to new post
+                    if ($existing === null){                       
+                        $wp_category_id = intval(get_option('default_category'));
+                        $wp_category_ids[]=$wp_category_id;
+                    }  
+                }
+                if (0 < sizeof($cats) ){
+                    // merge arrays and remove duplicate ids
+                    $wp_category_ids = array_unique(array_merge($wp_category_ids, $cats));
                 }
 				//check the last modified date and pub date (sometimes the API just updates the pub date), if the story hasn't changed, just go on
                 if ( $post_mod_date != strtotime( $story->lastModifiedDate->value ) || $post_pub_date !=  strtotime( $story->pubDate->value ) ) {
