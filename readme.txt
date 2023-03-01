@@ -11,8 +11,6 @@ Text Domain: nprapi
 
 A collection of tools for reusing content from NPR.org, now maintained and updated by NPR member station developers.
 
-Line of code added to test submodule configuration
-
 == Description ==
 
 The NPR Story API Plugin provides push and pull functionality with the NPR Story API along with a user-friendly administrative interface.
