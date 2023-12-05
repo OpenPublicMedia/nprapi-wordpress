@@ -633,7 +633,7 @@ function nprstory_save_datetime( $post_ID ) {
 	$time = ( isset( $_POST['nprone-expiry-time'] ) ) ? sanitize_text_field( $_POST['nprone-expiry-time'] ) : '00:00';
 
 	// If the post is not published and values are not set, save an empty post meta
-	if ( isset( $date ) && 'publish' === $post->status ) {
+	if ( !empty( $date ) && !empty( $post->status ) && 'publish' === $post->status ) {
 		$timezone = get_option( 'gmt_offset' );
 		$datetime = date_create( $date, nprstory_get_datetimezone() );
 		$time = explode( ':', $time );
@@ -643,6 +643,7 @@ function nprstory_save_datetime( $post_ID ) {
 	} else {
 		delete_post_meta( $post_ID, '_nprone_expiry_8601' );
 	}
+	return true;
 }
 add_action( 'save_post', 'nprstory_save_datetime');
 
