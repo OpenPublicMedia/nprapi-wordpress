@@ -880,7 +880,10 @@ class NPRAPIWordpress extends NPRAPI {
 				// simplify the arrangement of the storytext object
 				$layoutarry = [];
 				foreach( $story->layout->storytext as $type => $elements ) {
-					if ( !is_array( $elements ) ) {
+					if ( $elements === null ) {
+						continue;
+					}
+                    if ( !is_array( $elements ) ) {
 						$elements = [ $elements ];
 					}
 					foreach ( $elements as $element ) {
