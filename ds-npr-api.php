@@ -2,7 +2,7 @@
 /**
  * Plugin Name: NPR Story API
  * Description: A collection of tools for reusing content from NPR.org, now maintained and updated by NPR member station developers
- * Version: 1.9.5.2
+ * Version: 1.9.6
  * Author: Open Public Media
  * License: GPLv2
 */
@@ -226,6 +226,11 @@ function nprstory_add_header_meta() {
 			$npr_retrieved_story = get_post_meta( $id, 'npr_retrieved_story', 1 );
 			if ( $npr_retrieved_story == 1 ) {
 				$byline = get_post_meta( $id, 'npr_byline', 1 );
+				if ( function_exists( 'rel_canonical' ) ) {
+					remove_action( 'wp_head', 'rel_canonical' );
+				}
+				$original_url = get_post_meta( $id, NPR_HTML_LINK_META_KEY, 1 );
+				echo '<link rel="canonical" href="' . esc_url( $original_url ) . '" />' . "\n";
 			} elseif ( function_exists( 'get_coauthors' ) ) {
 				$byline = coauthors( ', ', ', ', '', '', false );
 			} else {
@@ -257,7 +262,7 @@ function nprstory_add_header_meta() {
 		}
 	}
 }
-add_action( 'wp_head', 'nprstory_add_header_meta', 100 );
+add_action( 'wp_head', 'nprstory_add_header_meta', 9 );
 
 // add_action('admin_notices', 'nprstory_cds_plugin_admin_notice');
 

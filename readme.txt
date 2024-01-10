@@ -4,7 +4,7 @@ Donate link: https://www.npr.org/series/750002/support-public-radio
 Tags: npr, news, public radio, api
 Requires at least: 3.8.14
 Tested up to: 6.0
-Stable tag: 1.9.5.2
+Stable tag: 1.9.6
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: nprapi
@@ -70,6 +70,9 @@ NPR Stories having got gotten
 
 
 == Changelog ==
+= V1.9.6 =
+* Articles imported from the API will now show the original article URL as the canonical URL in the header
+
 = V1.9.5.1 =
 * Adding `'no_found_posts' => false` to the query in `update_posts_from_stories()` for greater MySQL 8 compatability. Will also help on sites with large archives of posts
 * Adding support for admin messaging regarding the sunsetting of the NPR Story API and this plugin. Will actually roll the messaging out once the successor plugin (NPR CDS) is available in the plugin directory
