@@ -2,7 +2,7 @@
 /**
  * Plugin Name: NPR Story API
  * Description: A collection of tools for reusing content from NPR.org, now maintained and updated by NPR member station developers
- * Version: 1.9.6
+ * Version: 1.9.6.1
  * Author: Open Public Media
  * License: GPLv2
 */
@@ -264,7 +264,7 @@ function nprstory_add_header_meta() {
 }
 add_action( 'wp_head', 'nprstory_add_header_meta', 9 );
 
-// add_action('admin_notices', 'nprstory_cds_plugin_admin_notice');
+add_action('admin_notices', 'nprstory_cds_plugin_admin_notice');
 
 function nprstory_cds_plugin_admin_notice() {
 	global $pagenow;
@@ -282,10 +282,10 @@ function nprstory_cds_plugin_admin_notice() {
 		}
 	}
 	if ( $display ) { ?>
-		<div class="notice notice-warning">
+		<div class="notice notice-warning is-dismissible">
 			<h2><?php _e( 'The NPR Story API plugin is going away!', 'ds_npr_api' ); ?></h2>
-			<p><?php _e( 'In the coming months, the NPR Story API will be sunset in favor of the NPR Content Distribution System (CDS). The same great content, but with greater flexibility, a more modern architecture, and richer media support.', 'ds_npr_api' ); ?></p>
-			<p><?php _e( 'While the Story API will continue to function for some time, we encourage you to try out the new NPR CDS Plugin. Be sure to file a ticket in NPR Studio to get your authorization token and station information.', 'ds_npr_api' ); ?></p>
+			<p><?php _e( 'In the coming months, the NPR Story API will be sunset in favor of the <a href="https://npr.github.io/content-distribution-service/">NPR Content Distribution Service (CDS)</a>. The same great content, but with greater flexibility, a more modern architecture, and richer media support.', 'ds_npr_api' ); ?></p>
+			<p><?php _e( 'While the Story API will continue to function for some time, we encourage you to try out the <a href="https://wordpress.org/plugins/npr-content-distribution-service/">new NPR CDS Plugin</a>. Be sure to file a ticket in <a href="https://studio.npr.org/">NPR Studio</a> to get your authorization token and station information.', 'ds_npr_api' ); ?></p>
 		</div>
 <?php
 	}

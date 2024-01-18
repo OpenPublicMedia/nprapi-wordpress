@@ -6,7 +6,7 @@
 	"license"    : "GPL-2.0+",
 	"require": {},
 	"dist": {
-		"url": "https://github.com/OpenPublicMedia/nprapi-wordpress/archive/refs/tags/v1.9.6.zip",
+		"url": "https://github.com/OpenPublicMedia/nprapi-wordpress/archive/refs/tags/v1.9.6.1.zip",
 		"type": "zip"
 	},
 	"authors": [

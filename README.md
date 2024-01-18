@@ -70,6 +70,9 @@ NPR Stories having got gotten
 ## Changelog
 
 <!-- copy from readme.txt to here -->
+### V1.9.6.1
+* Added messaging about the eventual retirement of the Story API with links to the newly launched CDS plugin
+
 ### V1.9.6
 * Articles imported from the API will now show the original article URL as the canonical URL in the header
 
