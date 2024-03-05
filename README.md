@@ -70,6 +70,9 @@ NPR Stories having got gotten
 ## Changelog
 
 <!-- copy from readme.txt to here -->
+### V1.9.6.2
+* Fixed a potentially fatal error when trying to pull a Story API ID from a blank URL
+
 ### V1.9.6.1
 * Added messaging about the eventual retirement of the Story API with links to the newly launched CDS plugin
 

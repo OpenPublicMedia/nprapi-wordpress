@@ -138,14 +138,19 @@ class DS_NPR_API {
 				}
 			} else {
 				$story_id = sanitize_url( $story_id );
-				$meta = get_meta_tags( $story_id );
-				if ( !empty( $meta['brightspot-datalayer'] ) ) {
-					$json = json_decode( html_entity_decode( $meta['brightspot-datalayer'] ), TRUE );
-					if ( !empty( $json['nprStoryId'] ) ) {
-						$story_id = $json['nprStoryId'];
+				if ( wp_http_validate_url( $story_id ) ) {
+					$meta = get_meta_tags( $story_id );
+					if ( !empty( $meta['brightspot-datalayer'] ) ) {
+						$json = json_decode( html_entity_decode( $meta['brightspot-datalayer'] ), TRUE );
+						if ( !empty( $json['nprStoryId'] ) ) {
+							$story_id = $json['nprStoryId'];
+						}
+					} elseif ( !empty( $meta['story_id'] ) ) {
+						$story_id = $meta['story_id'];
+					} else {
+						nprstory_show_message( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again.", TRUE );
+						error_log( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again." ); // debug use
 					}
-				} elseif ( !empty( $meta['story_id'] ) ) {
-					$story_id = $meta['story_id'];
 				} else {
 					nprstory_show_message( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again.", TRUE );
 					error_log( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again." ); // debug use
