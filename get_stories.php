@@ -109,57 +109,62 @@ class DS_NPR_API {
 					403
 				);
 			}
-			$story_id = sanitize_text_field( $_POST[ 'story_id' ] );
+			$story_id = trim( sanitize_text_field( $_POST[ 'story_id' ] ) );
 			if ( isset( $_POST['publishNow'] ) ) {
 				$publish = true;
 			}
-			if ( isset( $_POST['createDaft'] ) ) {
+			if ( isset( $_POST['createDraft'] ) ) {
 				$publish = false;
 			}
 		} elseif ( isset( $_GET['story_id'] ) && isset( $_GET['create_draft'] ) ) {
-			$story_id = sanitize_text_field( $_GET['story_id'] );
+			$story_id = trim( sanitize_text_field( $_GET['story_id'] ) );
 		}
 
+		$valid = false;
 		// try to get the ID of the story from the URL
-		if ( isset( $story_id ) ) {
+		if ( !empty( $story_id ) ) {
 			//check to see if we got an ID or a URL
-			if ( is_numeric( $story_id ) ) {
-				if ( strlen( $story_id ) >= 8 ) {
-					$story_id = $story_id;
-				}
-			} elseif ( strpos( $story_id, 'npr.org' ) !== false ) {
+			if ( is_numeric( $story_id ) && strlen( $story_id ) >= 8 ) {
+				$valid = true;
+			} elseif ( preg_match( '/^[a-z0-9\-]+$/', $story_id ) ) {
+				$valid = true;
+			} elseif ( wp_http_validate_url( $story_id ) ) {
 				$story_id = sanitize_url( $story_id );
 				// url format: /yyyy/mm/dd/id
 				// url format: /blogs/name/yyyy/mm/dd/id
-				$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([0-9]{8,12}))\/.*/', '$4', $story_id );
-				if ( !is_numeric( $story_id ) ) {
-					// url format: /templates/story/story.php?storyId=id
-					$story_id = preg_replace( '/https?\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', '$2', $story_id );
-				}
-			} else {
-				$story_id = sanitize_url( $story_id );
-				if ( wp_http_validate_url( $story_id ) ) {
-					$meta = get_meta_tags( $story_id );
-					if ( !empty( $meta['brightspot-datalayer'] ) ) {
-						$json = json_decode( html_entity_decode( $meta['brightspot-datalayer'] ), TRUE );
-						if ( !empty( $json['nprStoryId'] ) ) {
-							$story_id = $json['nprStoryId'];
-						}
-					} elseif ( !empty( $meta['story_id'] ) ) {
-						$story_id = $meta['story_id'];
+				if ( str_contains( $story_id, 'npr.org' ) ) {
+					preg_match( '/https?:\/\/[^\s\/]*npr\.org\/((([^\/]*\/){3,5})([a-z\-0-9]+))\/.*/', $story_id, $matches );
+					if ( !empty( $matches[4] ) ) {
+						$story_id = $matches[4];
+						$valid = true;
 					} else {
-						nprstory_show_message( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again.", TRUE );
-						error_log( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again." ); // debug use
+						preg_match( '/https?\:\/\/[^\s\/]*npr\.org\/([^&\s\<]*storyId\=([0-9]+)).*/', $story_id, $matches );
+						if ( !empty( $matches[2] ) ) {
+							$story_id = $matches[2];
+							$valid = true;
+						}
 					}
 				} else {
-					nprstory_show_message( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again.", TRUE );
-					error_log( "The referenced URL (" . $story_id . ") does not contain a valid NPR Story API ID. Please try again." ); // debug use
+					$meta = get_meta_tags( $story_id );
+					if ( ! empty( $meta['brightspot-datalayer'] ) ) {
+						$json = json_decode( html_entity_decode( $meta['brightspot-datalayer'] ), true );
+						if ( ! empty( $json['nprStoryId'] ) ) {
+							$story_id = $json['nprStoryId'];
+							$valid = true;
+						}
+					} elseif ( ! empty( $meta['story_id'] ) ) {
+						$story_id = $meta['story_id'];
+						$valid = true;
+					} else {
+						nprstory_show_message( "The referenced URL (" . $story_id . ") does not contain a valid NPR CDS ID. Please try again.", true );
+						error_log( "The referenced URL (" . $story_id . ") does not contain a valid NPR CDS ID. Please try again." ); // debug use
+					}
 				}
 			}
 		}
 
 		// Don't do anything if $story_id isn't an ID
-		if ( isset( $story_id ) && is_numeric( $story_id ) ) {
+		if ( !empty( $story_id ) && $valid ) {
 			// start the API class
 			// todo: check that the API key is actually set
 			$api = new NPRAPIWordpress();
@@ -180,7 +185,6 @@ class DS_NPR_API {
 					$xml = simplexml_load_string( $api->xml );
 					nprstory_show_message( 'Error retrieving story for id = ' . $story_id . '<br> API error =' . $api->message->id . '<br> API Message =' . $xml->message->text, TRUE );
 					error_log( 'Not going to save the return from query for story_id=' . $story_id .', we got an error=' . $api->message->id . ' from the NPR Story API' ); // debug use
-					return;
 				}
 			}
 		}
